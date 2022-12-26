@@ -1,0 +1,52 @@
+application:
+  environment: Pet Development
+spring:
+  kafka:
+    bootstrap-servers: ${KAKFA_SERVER:localhost:9092}
+    listener:
+      ack-mode: MANUAL_IMMEDIATE
+    producer:
+      bootstrap-servers: ${KAKFA_SERVER:localhost:9092}
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      bootstrap-servers: ${KAFKA_SERVER:localhost:9092}
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: '*'
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  datasource:
+    initialization-mode: embedded
+    username: sa
+    password:
+    url: jdbc:h2:mem:petdb;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+  sql:
+    init:
+      platform: h2
+      data-locations: classpath:data-h2.sql
+      mode: always
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+  redis:
+    port: ${REDIS_PORT:6379}
+    host: ${REDIS_HOST:localhost}
+    password: ${REDIS_PASS:root}
+    database: ${REDIS_DB:0}
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: '*'
+  logging:
+    file:
+      name: ./logs/${spring.application.name}.log
